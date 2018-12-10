@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../elements/my-counter.html">
+<link rel="import" href="../elements/customer-list.html">
 
 <dom-module id="my-app">
   <template>
@@ -11,6 +12,8 @@
     <h2>Hello [[prop1]]</h2>
     <my-counter name="Counter 1" value="{{counter1}}"></my-counter>
     Counter 1: [[counter1.value]]
+    <customer-list customers="{{customerList}}"></customer-list>
+    <customer-list customers="{{customerList}}"></customer-list>
   </template>
 
   <script>
@@ -21,8 +24,27 @@
       properties: {
         counter1: {
           type: Object,
-          value: {value: 100, history: []},
+          value: {
+            value: 100,
+            history: []
+          },
         },
+        customerList: {
+          type: Array,
+          value: [{
+              id: 123,
+              name: "Customer 1"
+            },
+            {
+              id: 124,
+              name: "Customer 2"
+            },
+            {
+              id: 126,
+              name: "Customer 3"
+            },
+          ]
+        }
       }
 
     });

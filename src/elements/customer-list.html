@@ -1,0 +1,40 @@
+<dom-module id="customer-list">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .custId {
+                font-weight: bold;
+            }
+        </style>
+        <h2>Customer List</h2>
+        <ul>
+            <template is="dom-repeat" items="{{customers}}">
+                <li><span class="custId" >{{index}}::{{item.id}}</span> {{item.name}} <button on-tap="deleteCustomer">Delete</button></li>
+            </template>
+        </ul>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'customer-list',
+
+            properties: {
+                customers: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                }
+            },
+
+            deleteCustomer(event) {
+                console.log(event.model.item);
+                this.splice('customers', event.model.index, 1);
+                //this.customers = this.customers.filter(customer => customer.id !== itemId);
+            }
+
+        });
+    </script>
+</dom-module>
