@@ -14,16 +14,21 @@
   <body>
     <test-fixture id="basic">
       <template>
-        <my-app></my-app>
+        <my-counter></my-counter>
       </template>
     </test-fixture>
 
     <script>
-      suite('my-app', function() {
+      suite('my-counter', function() {
         test('instantiating the element works', function() {
           var element = fixture('basic');
-          assert.equal(element.is, 'my-app');
-          assert.equal(element.counter1.value, 100);
+          assert.equal(element.is, 'my-counter');
+        });
+        test('Value appears in div', function() {
+          var element = fixture('basic');
+          element.value = { value: 999, history: []};
+          const div = element.querySelector('div');
+          assert.equal(div.textContent, '999');
         });
       });
     </script>
