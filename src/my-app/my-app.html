@@ -1,0 +1,30 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../elements/my-counter.html">
+
+<dom-module id="my-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <h2>Hello [[prop1]]</h2>
+    <my-counter name="Counter 1" value="{{counter1}}"></my-counter>
+    Counter 1: [[counter1.value]]
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'my-app',
+
+      properties: {
+        counter1: {
+          type: Object,
+          value: {value: 100, history: []},
+        },
+      }
+
+    });
+  </script>
+</dom-module>

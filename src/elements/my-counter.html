@@ -1,0 +1,51 @@
+<dom-module id="my-counter">
+    <template>
+      <style>
+        :host {
+          display: block;
+        }
+      </style>
+      <h2>[[name]]</h2>
+      <button type="button" on-tap="onDecrease">-</button>
+      <div>[[value.value]]</div>
+      <button type="button" on-tap="onIncrease">+</button>
+      [[value.history.length]]
+    </template>
+  
+    <script>
+
+      Polymer({
+  
+        is: 'my-counter',
+  
+        properties: {
+          name: {
+            type: String,
+            value: 'Counter Name',
+          },
+          value: {
+            type: Object,
+            value: { value: 0, history: []},
+            notify: true
+          },
+        },
+
+        onIncrease(event) {
+            console.log('onIncrease', event);
+//            this.set('value.value', this.value.value + 1);
+            this.value.value++;
+            this.push('value.history',this.value.value);
+//            this.value.history.push(this.value.value);
+            this.notifyPath('value.value');
+        },
+        
+        onDecrease(event) {
+            console.log('onDecrease', event);
+            this.value.value--;
+            this.push('value.history',this.value.value);
+            this.notifyPath('value.value');
+        }
+
+      });
+    </script>
+  </dom-module>
