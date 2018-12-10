@@ -10,14 +10,29 @@
         </style>
         <h2>Customer List</h2>
         <ul>
+            <template is="dom-if" if="[[!customersNotEmpty]]">
+                No customer
+            </template>
             <template is="dom-repeat" items="{{customers}}">
-                <li><span class="custId" >{{index}}::{{item.id}}</span> {{item.name}} <button on-tap="deleteCustomer">Delete</button></li>
+                <li><span class="custId" >{{index}}::{{item.id}}</span> {{item.name}} 
+                    <button on-tap="deleteCustomer">Delete</button> 
+                    <button on-tap="selectCustomer">Select</button></li>
+            </template>
+        </ul>
+
+        <array-selector id="selector" items="{{customers}}" selected="{{selectedCustomers}}" multi toggle></array-selector>
+
+        <h2>selected customers:</h2>
+        <ul>
+        <template is="dom-repeat" items="{{selectedCustomers}}">
+                <li><span class="custId" >{{index}}::{{item.id}}</span> {{item.name}} 
+                    <button on-tap="deleteCustomer">Delete</button> </li>
             </template>
         </ul>
     </template>
 
     <script>
-        Polymer({
+        Polymer({   
 
             is: 'customer-list',
 
@@ -26,6 +41,10 @@
                     type: Array,
                     value: [],
                     notify: true
+                },
+                customersNotEmpty: {
+                    readonly: true,
+                    computed: '_customersNotEmpty(customers)'
                 }
             },
 
@@ -33,8 +52,14 @@
                 console.log(event.model.item);
                 this.splice('customers', event.model.index, 1);
                 //this.customers = this.customers.filter(customer => customer.id !== itemId);
+            },
+            selectCustomer(event) {
+                this.$.selector.select(event.model.item);
+                //this.customers = this.customers.filter(customer => customer.id !== itemId);
+            },
+            _customersNotEmpty(customers) {
+                return customers ? customers.length > 0 : false;
             }
-
         });
     </script>
 </dom-module>
