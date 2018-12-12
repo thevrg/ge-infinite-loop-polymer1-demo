@@ -23,60 +23,81 @@
 
 
     <script>
-        (function() {
-        let count = 0;
-        Polymer({
+        (function () {
+            let count = 0;
+            Polymer({
 
-            is: 'article-list',
+                is: 'article-list',
 
-            behaviors: [ReduxBehavior],
+                behaviors: [ReduxBehavior],
 
 
-            actions: {
-                'add': (article) => ({
-                    type: 'ADD_ARTICLE',
-                    article: {...article, id: ++count}
-                }),
-                'delayed_add': (article) => (dispatch, getState) => {
-                    setTimeout(() => {
+                actions: {
+                    'add': (article) => ({
+                        type: 'ADD_ARTICLE',
+                        article: { ...article,
+                            id: ++count
+                        }
+                    }),
+                    'delayed_add': (article) => (dispatch, getState, api) => {
+                        const newId = ++count;
                         dispatch({
                             type: 'ADD_ARTICLE',
-                            article: {...article, id: ++count}
+                            article: { ...article,
+                                id: newId
+                            }
                         });
-                    }, 1000);
-                },
-                'delete': (articleId) => ({
-                    type: 'REMOVE_ARTICLE',
-                    articleId
-                })
-            },
+                        api.addArticle({ ...article,
+                                id: newId
+                            })
+                            .then(
+                                (articleId) => {
+                                    dispatch({
+                                        type: 'ADD_ARTICLE_SUCCESS',
+                                        articleId
+                                    })
+                                },
+                                (error) => {
+                                    dispatch({
+                                        type: 'ADD_ARTICLE_FAILURE',
+                                        error
+                                    })
 
-            properties: {
-                articles: {
-                    type: Array,
-                    statePath: 'articles'
+                                }
+                            );
+                    },
+                    'delete': (articleId) => ({
+                        type: 'REMOVE_ARTICLE',
+                        articleId
+                    })
                 },
-                articleCount: {
-                    type: Number,
+
+                properties: {
+                    articles: {
+                        type: Array,
+                        statePath: 'articles'
+                    },
+                    articleCount: {
+                        type: Number,
+                    }
+                },
+
+                addArticle(event) {
+                    this.dispatch('add', {
+                        title: "Test",
+                        body: "This is the body of the article."
+                    });
+                },
+                addArticleWithDelay(event) {
+                    this.dispatch('delayed_add', {
+                        title: "Test",
+                        body: "This is the body of the article."
+                    });
+                },
+                deleteArticle(event) {
+                    this.dispatch('delete', event.model.article.id);
                 }
-            },
-
-            addArticle(event) {
-                this.dispatch('add', {
-                    title: "Test",
-                    body: "This is the body of the article."
-                });
-            },
-            addArticleWithDelay(event) {
-                this.dispatch('delayed_add', {
-                    title: "Test",
-                    body: "This is the body of the article."
-                });
-            },
-            deleteArticle(event) {
-                this.dispatch('delete', event.model.article.id);
-            }
-        });
-    })();
+            });
+        })();
     </script>
 </dom-module>

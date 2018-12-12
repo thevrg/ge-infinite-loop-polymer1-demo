@@ -1,7 +1,5 @@
 <script>
-
-
- const initialState = {
+    const initialState = {
         articles: [],
         counter1: 1
     };
@@ -12,18 +10,18 @@
                 return counterValue + 1;
 
             case 'DECREMENT_COUNTER':
-                return counterValue -1;
+                return counterValue - 1;
             default:
                 return counterValue;
         }
-    };    
+    };
 
     const articlesReducer = (state = [], action) => {
         switch (action.type) {
             case 'ADD_ARTICLE':
                 const newArticle = action.article;
                 return [...state, newArticle];
-                case 'REMOVE_ARTICLE':
+            case 'REMOVE_ARTICLE':
                 const articleIdToRemove = action.articleId;
                 return state.filter(article => article.id !== articleIdToRemove);
             default:
@@ -48,14 +46,28 @@
     });
 
     const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+
+    const api = {
+        addArticle(article) {
+            console.log('addArticle called');
+            return new Promise((resolve, reject) => {
+                console.log("PROMISE");
+                setTimeout(() => {
+                    console.log("REJECTING");
+                    reject("Error during adding article");
+                }, 1000);
+            });
+        }
+    };
+
     const store = Redux.createStore(reducer,
         composeEnhancers(
-            Redux.applyMiddleware(ReduxThunk.default)
+            Redux.applyMiddleware(ReduxThunk.default.withExtraArgument(api))
         )
     );
 
     const ReduxBehavior = PolymerRedux(store);
-    
+
 
     const actionCreator = {
         increment: () => ({
@@ -78,7 +90,4 @@
     // console.log(initialState === reducer(undefined, {
     //     type: 'XXX'
     // }));
- 
-
-
 </script>

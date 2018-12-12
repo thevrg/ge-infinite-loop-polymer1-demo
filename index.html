@@ -20,6 +20,18 @@
           dom: 'shadow',
           lazyRegister: true
         };
+
+        function mul2(val) {
+          return 2 * val;
+        }
+        function add5(val) {
+          return 5 + val;
+        }
+
+        const mul2Add5 = Redux.compose(add5, mul2, mul2, add5);
+
+        console.log('mul2Add5(1)', mul2Add5(1));
+
       </script>
     <link rel="import" href="/src/redux/redux-store.html">
     <link rel="import" href="/src/my-app/my-app.html">
