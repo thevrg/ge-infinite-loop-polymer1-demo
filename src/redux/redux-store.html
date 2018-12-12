@@ -1,0 +1,49 @@
+<script>
+    const initialState = {
+        counter1: 1
+    };
+
+    const reducer = (state = initialState, action) => {
+        let {counter1} = state;
+
+        switch (action.type) {
+            case 'INCREMENT_COUNTER':
+                counter1++;
+                // const newState = Object.assign({}, state);
+                // newState.counter1 = counter1;
+
+                return {
+                    ...state,
+                    counter1
+                };
+
+            case 'DECREMENT_COUNTER':
+                counter1--;
+                return {...state, counter1};
+            default:
+                return state;
+        }
+    };
+
+    const actionCreator = {
+        increment: () => ({
+            type: 'INCREMENT_COUNTER'
+        }),
+        decrement: () => ({
+            type: 'DECREMENT_COUNTER'
+        })
+    }
+
+    const
+
+    const state = {
+        counter1: 101
+    };
+
+    const newState = reducer(state, actionCreator.increment());
+    console.log('state', state, 'newState', newState);
+
+    console.log(initialState === reducer(undefined, {
+        type: 'XXX'
+    }));
+</script>
