@@ -17,7 +17,6 @@
                 <button on-tap="deleteArticle">Delete</button>
         </template>
         <button on-tap="addArticle">Add Article</button>
-        <button on-tap="addArticleWithDelay">Add Article with Delay</button>
 
     </template>
 
@@ -25,52 +24,48 @@
     <script>
         (function () {
             let count = 0;
+
+            const actions = {
+                'add': (article) => ({
+                    type: 'ADD_ARTICLE',
+                    article
+                }),
+                'add_success': (articleId) => ({
+                    type: 'ADD_ARTICLE_SUCCESS',
+                    articleId
+                }),
+                'add_failure': (error) => ({
+                    type: 'ADD_ARTICLE_FAILURE',
+                    error
+                }),
+                'addThunk': (article) => async (dispatch, getState, api) => {
+                    const newId = ++count;
+                    const articleWithId = { ...article,
+                        id: newId
+                    };
+                    dispatch(actions.add(articleWithId));
+                    try {
+                        const articleId = await api.addArticle({ ...article,
+                            id: newId
+                        });
+                        dispatch(actions.add_success(articleId));
+                    } catch (error) {
+                        dispatch(actions.add_failure(error));
+                    }
+                },
+                'delete': (articleId) => ({
+                    type: 'REMOVE_ARTICLE',
+                    articleId
+                })
+            };
+
             Polymer({
 
                 is: 'article-list',
 
                 behaviors: [ReduxBehavior],
 
-
-                actions: {
-                    'add': (article) => ({
-                        type: 'ADD_ARTICLE',
-                        article: { ...article,
-                            id: ++count
-                        }
-                    }),
-                    'delayed_add': (article) => (dispatch, getState, api) => {
-                        const newId = ++count;
-                        dispatch({
-                            type: 'ADD_ARTICLE',
-                            article: { ...article,
-                                id: newId
-                            }
-                        });
-                        api.addArticle({ ...article,
-                                id: newId
-                            })
-                            .then(
-                                (articleId) => {
-                                    dispatch({
-                                        type: 'ADD_ARTICLE_SUCCESS',
-                                        articleId
-                                    })
-                                },
-                                (error) => {
-                                    dispatch({
-                                        type: 'ADD_ARTICLE_FAILURE',
-                                        error
-                                    })
-
-                                }
-                            );
-                    },
-                    'delete': (articleId) => ({
-                        type: 'REMOVE_ARTICLE',
-                        articleId
-                    })
-                },
+                actions,
 
                 properties: {
                     articles: {
@@ -83,13 +78,7 @@
                 },
 
                 addArticle(event) {
-                    this.dispatch('add', {
-                        title: "Test",
-                        body: "This is the body of the article."
-                    });
-                },
-                addArticleWithDelay(event) {
-                    this.dispatch('delayed_add', {
+                    this.dispatch('addThunk', {
                         title: "Test",
                         body: "This is the body of the article."
                     });
