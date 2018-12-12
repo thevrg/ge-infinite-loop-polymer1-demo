@@ -1,50 +1,60 @@
 <dom-module id="my-counter">
-    <template>
-      <style>
-        :host {
+  <template>
+    <style>
+      :host {
           display: block;
         }
       </style>
-      <h2>[[name]]</h2>
-      <button type="button" on-tap="onDecrease">-</button>
-      <div>[[value]]</div>
-      <button type="button" on-tap="onIncrease">+</button>
-    </template>
-  
-    <script>
+    <h2>[[name]]</h2>
+    <button type="button" on-tap="onDecrease">-</button>
+    <div>[[value]]</div>
+    <button type="button" on-tap="onIncrease">+</button>
+  </template>
 
-      Polymer({
-  
-        is: 'my-counter',
+  <script>
+    Polymer({
 
-        attached() {
-          this.value = store.getState().counter1;
-          store.subscribe(() => {
-            console.log("state change detected");
-            const {counter1} = store.getState();
-            this.value = counter1;
-          });
+      is: 'my-counter',
+
+      attached() {
+        this.value = store.getState().counter1;
+        store.subscribe(() => {
+          console.log("state change detected");
+          const {
+            counter1
+          } = store.getState();
+          this.value = counter1;
+        });
+      },
+
+      actions: {
+        increment: () => ({
+          type: 'INCREMENT_COUNTER'
+        }),
+        decrement: () => ({
+          type: 'DECREMENT_COUNTER'
+        })
+      },
+
+      properties: {
+        name: {
+          type: String,
+          value: "Counter Name"
         },
-  
-        properties: {
-          name: {
-            type: String,
-            value: 'Counter Name',
-          },
-          value: {
-            type: Number,
-            value: 0
-          },
+        value: {
+          type: Number,
+          statePath: 'counter1'
         },
+      },
 
-        onIncrease(event) {
-          store.dispatch(actionCreator.increment());
-        },
-        
-        onDecrease(event) {
-          store.dispatch(actionCreator.decrement());
-        }
+      onIncrease(event) {
+        this.dispatch(actionCreator.increment());
+      },
 
-      });
-    </script>
-  </dom-module>
+      onDecrease(event) {
+        this.dispatch(actionCreator.decrement());
+      }
+
+    });
+  </script>
+</dom-module>

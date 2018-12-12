@@ -1,0 +1,82 @@
+<link rel="import" href="../redux/redux-store.html">
+
+<dom-module id="article-list">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            .custId {
+                font-weight: bold;
+            }
+        </style>
+        <h2>Articles ([[articleCount]])</h2>
+        <template is="dom-repeat" items="{{articles}}" as="article">
+            <li><span class="custId">{{article.id}}</span> {{article.title}}
+                <button on-tap="deleteArticle">Delete</button>
+        </template>
+        <button on-tap="addArticle">Add Article</button>
+        <button on-tap="addArticleWithDelay">Add Article with Delay</button>
+
+    </template>
+
+
+    <script>
+        (function() {
+        let count = 0;
+        Polymer({
+
+            is: 'article-list',
+
+            behaviors: [ReduxBehavior],
+
+
+            actions: {
+                'add': (article) => ({
+                    type: 'ADD_ARTICLE',
+                    article: {...article, id: ++count}
+                }),
+                'delayed_add': (article) => (dispatch, getState) => {
+                    setTimeout(() => {
+                        dispatch({
+                            type: 'ADD_ARTICLE',
+                            article: {...article, id: ++count}
+                        });
+                    }, 1000);
+                },
+                'delete': (articleId) => ({
+                    type: 'REMOVE_ARTICLE',
+                    articleId
+                })
+            },
+
+            properties: {
+                articles: {
+                    type: Array,
+                    statePath: 'articles'
+                },
+                articleCount: {
+                    type: Number,
+                }
+            },
+
+            addArticle(event) {
+                this.dispatch('add', {
+                    title: "Test",
+                    body: "This is the body of the article."
+                });
+            },
+            addArticleWithDelay(event) {
+                this.dispatch('delayed_add', {
+                    title: "Test",
+                    body: "This is the body of the article."
+                });
+            },
+            deleteArticle(event) {
+                this.dispatch('delete', event.model.article.id);
+            }
+        });
+    })();
+    </script>
+</dom-module>

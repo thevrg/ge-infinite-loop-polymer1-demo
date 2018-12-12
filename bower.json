@@ -4,7 +4,10 @@
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.9.0",
-    "redux": "https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"
+    "redux": "https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js",
+    "redux-thunk": "https://cdnjs.cloudflare.com/ajax/libs/redux-thunk/2.2.0/redux-thunk.min.js",
+    "polymer-redux": "0.4.2",
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

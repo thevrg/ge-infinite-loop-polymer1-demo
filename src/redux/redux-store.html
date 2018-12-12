@@ -1,29 +1,61 @@
 <script>
-    const initialState = {
+
+
+ const initialState = {
+        articles: [],
         counter1: 1
     };
 
-    const reducer = (state = initialState, action) => {
-        let {counter1} = state;
-
+    const counterReducer = (counterValue = 1, action) => {
         switch (action.type) {
             case 'INCREMENT_COUNTER':
-                counter1++;
-                // const newState = Object.assign({}, state);
-                // newState.counter1 = counter1;
-
-                return {
-                    ...state,
-                    counter1
-                };
+                return counterValue + 1;
 
             case 'DECREMENT_COUNTER':
-                counter1--;
-                return {...state, counter1};
+                return counterValue -1;
+            default:
+                return counterValue;
+        }
+    };    
+
+    const articlesReducer = (state = [], action) => {
+        switch (action.type) {
+            case 'ADD_ARTICLE':
+                const newArticle = action.article;
+                return [...state, newArticle];
+                case 'REMOVE_ARTICLE':
+                const articleIdToRemove = action.articleId;
+                return state.filter(article => article.id !== articleIdToRemove);
             default:
                 return state;
         }
     };
+
+    // const reducer = (state, action) => {
+    //     const newArticlesState = articlesReducer(state.articles, action);
+    //     const newCounterState = counterReducer(state.counter1, action);
+
+    //     if (newArticlesState !== state.articles || newCounterState !== state.counter1) {
+    //         return {...state, articles: newArticlesState, counter1: newCounterState};
+    //     } else {
+    //         return state;
+    //     }
+    // };
+
+    const reducer = Redux.combineReducers({
+        articles: articlesReducer,
+        counter1: counterReducer,
+    });
+
+    const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || Redux.compose;
+    const store = Redux.createStore(reducer,
+        composeEnhancers(
+            Redux.applyMiddleware(ReduxThunk.default)
+        )
+    );
+
+    const ReduxBehavior = PolymerRedux(store);
+    
 
     const actionCreator = {
         increment: () => ({
@@ -46,11 +78,7 @@
     // console.log(initialState === reducer(undefined, {
     //     type: 'XXX'
     // }));
+ 
 
-    const store = Redux.createStore(reducer);
-
-    store.dispatch(actionCreator.increment());
-
-    console.log('STATE', store.getState());
 
 </script>
