@@ -7,9 +7,8 @@
       </style>
       <h2>[[name]]</h2>
       <button type="button" on-tap="onDecrease">-</button>
-      <div>[[value.value]]</div>
+      <div>[[value]]</div>
       <button type="button" on-tap="onIncrease">+</button>
-      [[value.history.length]]
     </template>
   
     <script>
@@ -17,6 +16,15 @@
       Polymer({
   
         is: 'my-counter',
+
+        attached() {
+          this.value = store.getState().counter1;
+          store.subscribe(() => {
+            console.log("state change detected");
+            const {counter1} = store.getState();
+            this.value = counter1;
+          });
+        },
   
         properties: {
           name: {
@@ -24,26 +32,17 @@
             value: 'Counter Name',
           },
           value: {
-            type: Object,
-            value: { value: 0, history: []},
-            notify: true
+            type: Number,
+            value: 0
           },
         },
 
         onIncrease(event) {
-            console.log('onIncrease', event);
-//            this.set('value.value', this.value.value + 1);
-            this.value.value++;
-            this.push('value.history',this.value.value);
-//            this.value.history.push(this.value.value);
-            this.notifyPath('value.value');
+          store.dispatch(actionCreator.increment());
         },
         
         onDecrease(event) {
-            console.log('onDecrease', event);
-            this.value.value--;
-            this.push('value.history',this.value.value);
-            this.notifyPath('value.value');
+          store.dispatch(actionCreator.decrement());
         }
 
       });

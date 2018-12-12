@@ -34,16 +34,23 @@
         })
     }
 
-    const
+    // const
 
-    const state = {
-        counter1: 101
-    };
+    // const state = {
+    //     counter1: 101
+    // };
 
-    const newState = reducer(state, actionCreator.increment());
-    console.log('state', state, 'newState', newState);
+    // const newState = reducer(state, actionCreator.increment());
+    // console.log('state', state, 'newState', newState);
 
-    console.log(initialState === reducer(undefined, {
-        type: 'XXX'
-    }));
+    // console.log(initialState === reducer(undefined, {
+    //     type: 'XXX'
+    // }));
+
+    const store = Redux.createStore(reducer);
+
+    store.dispatch(actionCreator.increment());
+
+    console.log('STATE', store.getState());
+
 </script>
