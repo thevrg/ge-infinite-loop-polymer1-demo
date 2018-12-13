@@ -1,4 +1,5 @@
 <script>
+
     const initialState = {
         articles: [],
         counter1: 1
@@ -16,18 +17,90 @@
         }
     };
 
-    const articlesReducer = (state = [], action) => {
+    const articlesInitialState = {
+        articleById: {},
+        articleIds: [],
+        articleStatusById: {}
+    }
+
+    const articleByIdReducer = (articleById = {}, action) => {
         switch (action.type) {
             case 'ADD_ARTICLE':
-                const newArticle = action.article;
-                return [...state, newArticle];
+                const {
+                    article
+                } = action; // const article = action.article;
+                return { ...articleById,
+                    [article.id]: article
+                };
             case 'REMOVE_ARTICLE':
-                const articleIdToRemove = action.articleId;
-                return state.filter(article => article.id !== articleIdToRemove);
+                const {
+                    articleId
+                } = action; // const article = action.article;
+                const newState = { ...articleById
+                };
+                delete newState[articleId];
+                return newState;
             default:
-                return state;
+                return articleById;
         }
-    };
+    }
+
+    const articleIdsReducer = (articleIds = [], action) => {
+        switch (action.type) {
+            case 'ADD_ARTICLE':
+                const {
+                    article
+                } = action; // const article = action.article;
+                return [...articleIds, article.id];
+            case 'REMOVE_ARTICLE':
+                const {
+                    articleId
+                } = action; // const article = action.article;
+                return articleIds.filter(id => id !== articleId)
+            default:
+                return articleIds;
+        }
+    }
+
+    const articleStatusByIdReducer = (articleStatusById = {}, action) => {
+        switch (action.type) {
+            case 'ADD_ARTICLE':
+                {
+                    const {
+                        article
+                    } = action; // const article = action.article;
+                    return { ...articleStatusById,
+                        [article.id]: 'loading'
+                    };
+                }
+            case 'ADD_ARTICLE_SUCCESS':
+                {
+                    const {
+                        articleId
+                    } = action; // const article = action.article;
+                    return { ...articleStatusById,
+                        [articleId]: 'loaded'
+                    };
+                }
+            case 'ADD_ARTICLE_FAILURE':
+                {
+                    const {
+                        articleId
+                    } = action; // const article = action.article;
+                    return { ...articleStatusById,
+                        [articleId]: 'failed'
+                    };
+                }
+            default:
+                return articleStatusById;
+        }
+    }
+
+    const articlesReducer = Redux.combineReducers({
+        articleById: articleByIdReducer,
+        articleIds: articleIdsReducer,
+        articleStatusById: articleStatusByIdReducer
+    });
 
     // const reducer = (state, action) => {
     //     const newArticlesState = articlesReducer(state.articles, action);
@@ -51,10 +124,8 @@
         addArticle(article) {
             console.log('addArticle called');
             return new Promise((resolve, reject) => {
-                console.log("PROMISE");
                 setTimeout(() => {
-                    console.log("REJECTING");
-                    reject("Error during adding article");
+                    resolve(article.id);
                 }, 1000);
             });
         }
@@ -77,6 +148,36 @@
             type: 'DECREMENT_COUNTER'
         })
     }
+
+    // reselect equivalent createSelector implementation:
+    function createSelector() {
+        const paramCount = arguments.length;
+        if (paramCount < 1) {
+            throw new Error('At least one function required');
+        }
+
+        if (paramCount == 1) {
+            return arguments[0];
+        }
+
+        const sourceSelectors = Array.from(arguments).slice(0,arguments.length - 1);
+        const combiner = arguments[arguments.length - 1];
+        
+        return state => {
+            const sourceValues = sourceSelectors.map(selector => selector(state));
+            return combiner(...sourceValues);
+        }
+    }
+
+    const selectArticlesState = (state) => state.articles;
+
+    const selectArticleIds = createSelector(selectArticlesState, articles => articles.articleIds);
+
+    const selectArticleById = createSelector(selectArticlesState, articles => articles.articleById);
+
+    const selectNumberOfArticles = createSelector(selectArticleIds, ids => ids.length);
+
+    const selectArticleList = createSelector(selectArticleIds, selectArticleById, (ids, byId) => ids.map(id => byId[id]));
 
     // const
 

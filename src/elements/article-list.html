@@ -34,8 +34,9 @@
                     type: 'ADD_ARTICLE_SUCCESS',
                     articleId
                 }),
-                'add_failure': (error) => ({
+                'add_failure': (articleId, error) => ({
                     type: 'ADD_ARTICLE_FAILURE',
+                    articleId,
                     error
                 }),
                 'addThunk': (article) => async (dispatch, getState, api) => {
@@ -50,7 +51,7 @@
                         });
                         dispatch(actions.add_success(articleId));
                     } catch (error) {
-                        dispatch(actions.add_failure(error));
+                        dispatch(actions.add_failure(newId, error));
                     }
                 },
                 'delete': (articleId) => ({
@@ -70,10 +71,11 @@
                 properties: {
                     articles: {
                         type: Array,
-                        statePath: 'articles'
+                        statePath: selectArticleList
                     },
                     articleCount: {
                         type: Number,
+                        statePath: selectNumberOfArticles
                     }
                 },
 
